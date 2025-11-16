@@ -13,10 +13,12 @@
 #define LEFT_LED 30
 #define RIGHT_LED 17
 
+// variables to get change in rotation
+int xLast;
+int yLast;
+int zLast;
+
 // calibration for the sensor
-
-
-
 void setup() {
   Mouse.begin();
   Serial.begin(115200);
@@ -39,12 +41,6 @@ void setup() {
 
 
 void loop() {
-
-
-
-  //Mouse.move(0, 0, 0);
-
-
   if (digitalRead(LEFT_CLICK) == LOW){
     if (!Mouse.isPressed(MOUSE_LEFT)) {
       Mouse.press(MOUSE_LEFT);
@@ -81,15 +77,35 @@ void loop() {
   int yValue = analogRead(Y_OUT);
   int zValue = analogRead(Z_OUT);
 
+
+  int minVal = 1;
+  int xMove = 0;
+  int yMove = 0;
+
+  int moveMultiplier = 5;
+
+  if ((yValue - yLast) > minVal || (yValue - yLast)*-1 > minVal){
+    xMove = (yValue - yLast)*moveMultiplier;
+  }
+
+  if ((xValue - xLast) > minVal || (yValue - yLast)*-1 > minVal){
+    yMove = -(xValue - xLast)*moveMultiplier;
+  }
+
+  Mouse.move(xMove, yMove);
+
+  xLast = xValue;
+  yLast = yValue;
+  zLast = zValue;
   // Print the values to the Serial Monitor
-  Serial.print("X: ");
-  Serial.print(xValue);
-  Serial.print(" | Y: ");
-  Serial.print(yValue);
-  Serial.print(" | Z: ");
-  Serial.println(zValue);
+  //Serial.print("X: ");
+  //Serial.print(xValue);
+  //Serial.print(" | Y: ");
+  //Serial.print(yValue);
+  //Serial.print(" | Z: ");
+  //Serial.println(zValue);
 
   // Small delay for stable readings
-  delay(100);
+  //delay(100);
 
 }
