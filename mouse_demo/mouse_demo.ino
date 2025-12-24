@@ -21,9 +21,18 @@ int16_t gyro_x, gyro_y, gyro_z;
 int16_t temperature; 
 
 // variables to get change in rotation
-int xLast;
-int yLast;
-int zLast;
+int16_t x_last = 0;
+int16_t y_last = 0;
+int16_t z_last = 0;
+
+int16_t x_frames = 0;
+int16_t y_frames = 0;
+int16_t z_frames = 0;
+
+int16_t filter = 100;
+int16_t consecutive_franes = 4;
+
+char first_frame = 1;
 
 char tmp_str[7]; 
 
@@ -97,20 +106,48 @@ void loop() {
   accelerometer_x = Wire.read()<<8 | Wire.read();
   accelerometer_y = Wire.read()<<8 | Wire.read();
   accelerometer_z = Wire.read()<<8 | Wire.read(); 
+
   temperature = Wire.read()<<8 | Wire.read();
   gyro_x = Wire.read()<<8 | Wire.read(); 
   gyro_y = Wire.read()<<8 | Wire.read(); 
   gyro_z = Wire.read()<<8 | Wire.read();
+
+  if (!first_frame){
+    // get difference
+    int16_t x_diff = gyro_x - x_last;
+    int16_t y_diff = gyro_y - y_last;
+    int16_t z_diff = gyro_z - z_last;
+
+    // filter by value
+    x_diff = (x_diff < filter && x_diff > -filter) ? 0 : x_diff;
+    y_diff = (y_diff < filter && y_diff > -filter) ? 0 : y_diff;
+    z_diff = (z_diff < filter && z_diff > -filter) ? 0 : z_diff;
+
+    // filter outliers
+    x_frames = (x_diff) ? (x_frames + 1) : 0;
+    y_frames = (y_diff) ? (y_frames + 1) : 0;
+    z_frames = (z_diff) ? (z_frames + 1) : 0;
+
+    x_diff = (x_frames > consecutive_franes) ? x_diff : 0;
+    y_diff = (y_frames > consecutive_franes) ? y_diff : 0;
+    z_diff = (z_frames > consecutive_franes) ? z_diff : 0;
+
+    Serial.print("aX = "); Serial.print(convert_int16_to_str(x_diff));
+    Serial.print(" | aY = "); Serial.print(convert_int16_to_str(y_diff));
+    Serial.print(" | aZ = "); Serial.print(convert_int16_to_str(z_diff));
+
+    Serial.println();
+  }else{
+    first_frame = 0;
+  }
+
+  x_last = gyro_x;
+  y_last = gyro_y;
+  z_last = gyro_z;
+
+
   
 
-  Serial.print("aX = "); Serial.print(convert_int16_to_str(accelerometer_x));
-  Serial.print(" | aY = "); Serial.print(convert_int16_to_str(accelerometer_y));
-  Serial.print(" | aZ = "); Serial.print(convert_int16_to_str(accelerometer_z));
 
-  Serial.print(" | tmp = "); Serial.print(temperature/340.00+36.53);
-  Serial.print(" | gX = "); Serial.print(convert_int16_to_str(gyro_x));
-  Serial.print(" | gY = "); Serial.print(convert_int16_to_str(gyro_y));
-  Serial.print(" | gZ = "); Serial.print(convert_int16_to_str(gyro_z));
-  Serial.println();
 
 }
