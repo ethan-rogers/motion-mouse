@@ -33,6 +33,8 @@ double x_diff = 0, y_diff = 0, z_diff = 0;
 
 double threshhold = 1;
 
+int multiplier = 5;
+
 void setup()
 {      
   int error;
@@ -94,6 +96,8 @@ void loop()
   y_diff = (abs(y_diff) >= threshhold) ? y_diff : 0;
   z_diff = (abs(z_diff) >= threshhold) ? z_diff : 0;
 
+  Mouse.move(y_diff * multiplier, x_diff * multiplier);
+
   digitalWrite(13, HIGH);
   Serial.print(x_diff, 2);
   Serial.print(", ");
@@ -101,7 +105,6 @@ void loop()
   Serial.print(", ");
   Serial.println(z_diff, 2);
   digitalWrite(13, LOW);
-
 
   oldgx = gx;
   oldgy = gy;
@@ -112,27 +115,27 @@ void loop()
 
 
     end_time = millis();
-    if (digitalRead(LEFT_CLICK) == LOW){
+    if (digitalRead(LEFT_CLICK) == HIGH){
       if (!Mouse.isPressed(MOUSE_LEFT)) {
-        //Mouse.press(MOUSE_LEFT);
+        Mouse.press(MOUSE_LEFT);
         //Serial.println("LEFT CLICKED");
       }
-      Serial.println("LEFT CLICKED");
+      //Serial.println("LEFT CLICKED");
       digitalWrite(LEFT_LED, LOW);
     }else
     {
       if (Mouse.isPressed(MOUSE_LEFT)) {
-        //Mouse.release(MOUSE_LEFT);
+        Mouse.release(MOUSE_LEFT);
        // Serial.println("LEFT RELEASED");
       }
-      Serial.println("LEFT RELEASED");
+      //Serial.println("LEFT RELEASED");
       digitalWrite(LEFT_LED, HIGH);
     }
 
 
-    if (digitalRead(RIGHT_CLICK) == LOW){
+    if (digitalRead(RIGHT_CLICK) == HIGH){
       if (!Mouse.isPressed(MOUSE_RIGHT)) {
-        //Mouse.press(MOUSE_RIGHT);
+        Mouse.press(MOUSE_RIGHT);
         //Serial.println("RIGHT CLICKED");
       }
       //Serial.println("RIGHT CLICKED");
@@ -141,7 +144,7 @@ void loop()
     {
       //Serial.println("RIGHT RELEASED");
       if (Mouse.isPressed(MOUSE_RIGHT)) {
-        //Mouse.release(MOUSE_RIGHT);
+        Mouse.release(MOUSE_RIGHT);
         //Serial.println("RIGHT RELEASED");
       }
       digitalWrite(RIGHT_LED, HIGH);
