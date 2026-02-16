@@ -32,6 +32,7 @@ double oldgx = 0, oldgy = 0, oldgz = 0;
 double x_diff = 0, y_diff = 0, z_diff = 0;
 
 double threshhold = 1;
+double max_movement = 10;
 
 int multiplier = 5;
 
@@ -95,6 +96,10 @@ void loop()
   x_diff = (abs(x_diff) >= threshhold) ? x_diff : 0;
   y_diff = (abs(y_diff) >= threshhold) ? y_diff : 0;
   z_diff = (abs(z_diff) >= threshhold) ? z_diff : 0;
+
+  x_diff = (abs(x_diff) <= max_movement) ? x_diff : 0;
+  y_diff = (abs(y_diff) <= max_movement) ? y_diff : 0;
+  z_diff = (abs(z_diff) <= max_movement) ? z_diff : 0;
 
   Mouse.move(y_diff * multiplier, x_diff * multiplier);
 

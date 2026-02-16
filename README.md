@@ -21,9 +21,15 @@ The top push button acts as the left click. The bottom push button is the right 
 
 Note that while the push button pins can be changed in code, the pins for the MPU-6050 are requried for I2C connection. 
 
+### Breadboard
+
+Here is my breadboard prototype. 
+
+![](images/prototype.jpg)
+
 ## Calibrating
 
-
+There are three variables that do calibration. `threshhold` determines the smallest change that will be accepted. This helps filter noise and unintentional movement. `max_movement` filters out overly large changes in acceleration. This ussually happens when the user instantly stops the mouse. Without this, the mouse will just bounce back to its original position. `multiplier` determines how sensitive the mouse movement is. 
 
 ## Reference
 
